@@ -1,6 +1,6 @@
-# Đại đoàn kết toàn dân tộc — Minigame V4
+# Đại đoàn kết toàn dân tộc — Minigame V5
 
-Web trình chiếu HTML/CSS/JS thuần. Mở `docs/index.html` bằng Edge/Chrome. Trang bìa bấm bất kỳ đâu để bắt đầu; không có settings. 30 câu theo thứ tự tài liệu, 4 đội, 30 giây/câu, +100 điểm cho câu đúng. MC nhấn 1–4 để đổi đội ngay, sau đó nhấn A–D hoặc bấm đáp án. Phím Enter hoặc mũi tên phải để bắt đầu/qua câu đã chốt; 1–4 để chọn đội; A–D để trả lời; P để tạm dừng; R để hiện đáp án; F để toàn màn hình. Chơi chung một màn hình, không đồng bộ các thiết bị. Tải lại trang sẽ mất điểm.
+Web trình chiếu HTML/CSS/JS thuần. Mở `docs/index.html` bằng Edge/Chrome. Trang bìa bấm bất kỳ đâu để bắt đầu; không có settings. 30 câu theo thứ tự tài liệu, 6 đội, 30 giây/câu, +100 điểm cho câu đúng. MC nhấn 1–6 để đổi đội ngay, sau đó nhấn A–D hoặc bấm đáp án. Phím Enter hoặc mũi tên phải để bắt đầu/qua câu đã chốt; 1–6 để chọn đội; A–D để trả lời; P để tạm dừng; R để hiện đáp án; F để toàn màn hình. Chơi chung một màn hình, không đồng bộ các thiết bị. Tải lại trang sẽ mất điểm.
 
 ## Ảnh bìa
 Ảnh tư liệu: Ho Chi Minh with Vietnamese expats in France, 1946 (Wikimedia Commons, tác giả không rõ; Commons đánh dấu public domain).
@@ -13,13 +13,13 @@ https://commons.wikimedia.org/wiki/File:Ho_Chi_Minh_with_Vietnamese_expats_in_Fr
 - GitHub Pages: Settings > Pages > Deploy from a branch > main > /docs > Save.
 - Host tĩnh khác: publish thư mục `docs`, không cần build.
 
-Nếu cập nhật repo đã có, giải nén ZIP vào thư mục cha của repo doan-ket-quiz (ví dụ D:\), đồng ý ghi đè file trùng, `git add .`, `git commit -m "Fix slide minigame V4"`, `git push`. Không ghi đè lịch sử Git.
+Nếu cập nhật repo đã có, giải nén ZIP vào thư mục cha của repo doan-ket-quiz (ví dụ D:\), đồng ý ghi đè file trùng, `git add .`, `git commit -m "Update minigame to six teams"`, `git push`. Không ghi đè lịch sử Git.
 
 ## QR truy cập
 Sau khi deploy, tạo QR từ URL HTTPS công khai của Worker bằng chức năng tạo mã QR của trình duyệt hoặc công cụ QR. Điện thoại quét được link nhưng mỗi thiết bị là một phiên chơi riêng; không đồng bộ điểm hoặc phòng với máy chiếu.
 
 ## Cấu hình
-Google Doc không quy định số đội. V4 dùng 4 đội mặc định; nếu cần 6, thêm Đội 5 và Đội 6 vào mảng TEAMS trong index.html (phím 5–6 được hỗ trợ).
+Google Doc không quy định số đội. V5 dùng 6 đội mặc định, phím 1–6 chọn đội trực tiếp.
 
 ## Kiểm thử
 Đáp án và lời giải kế thừa bản V3 (suy ra từ Google Doc không có bảng đáp án riêng); nhóm nên rà soát trước khi trình chiếu.
