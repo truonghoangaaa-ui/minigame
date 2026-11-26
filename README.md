@@ -1,8 +1,8 @@
-# Đại đoàn kết toàn dân tộc — Minigame V6.1
+# Đại đoàn kết toàn dân tộc — Minigame V6.2
 
 Bản cập nhật cho repo đã triển khai V5. Giải nén ZIP vào `D:\` (thư mục gốc trong ZIP là `doan-ket-quiz`), ghi đè các file trùng. ZIP chủ ý không chứa `wrangler.jsonc` và `.git` để giữ tên Worker, cấu hình deploy và lịch sử Git đang dùng. Mở `docs/index.html` bằng Chrome/Edge để thử.
 
-V6.1: đồng bộ câu 16 với Google Doc mới nhất (bỏ nhãn liên kết chương ở đầu câu); bỏ tự focus tiêu đề câu hỏi.
+V6.2: chỉnh câu 16 theo yêu cầu nhóm, bỏ cả hai chú thích chương trong nội dung và đổi “cùng” thành “dù”; giữ nguyên phương án, đáp án và lời giải. Kế thừa bản V6.1 đã bỏ tự focus tiêu đề.
 
 ## Luật chơi
 
@@ -23,7 +23,7 @@ V6.1: đồng bộ câu 16 với Google Doc mới nhất (bỏ nhãn liên kết
 ## Cập nhật GitHub
 
 ```cmd
-cd /d D:\doan-ket-quiz && git add docs/index.html README.md && git commit -m "V6.1 - Sync question 16" && git push
+cd /d D:\doan-ket-quiz && git add docs/index.html README.md && git commit -m "V6.2 - Simplify question 16" && git push
 ```
 
 Cloudflare tự deploy nếu đã kết nối repo và bật tự động triển khai; URL công khai không thay đổi nếu giữ Worker hiện tại. Không cần tạo repo mới.
