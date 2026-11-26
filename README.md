@@ -1,25 +1,27 @@
-# Đại đoàn kết toàn dân tộc — Minigame V5
+# Đại đoàn kết toàn dân tộc — Minigame V6
 
-Web trình chiếu HTML/CSS/JS thuần. Mở `docs/index.html` bằng Edge/Chrome. Trang bìa bấm bất kỳ đâu để bắt đầu; không có settings. 30 câu theo thứ tự tài liệu, 6 đội, 30 giây/câu, +100 điểm cho câu đúng. MC nhấn 1–6 để đổi đội ngay, sau đó nhấn A–D hoặc bấm đáp án. Phím Enter hoặc mũi tên phải để bắt đầu/qua câu đã chốt; 1–6 để chọn đội; A–D để trả lời; P để tạm dừng; R để hiện đáp án; F để toàn màn hình. Chơi chung một màn hình, không đồng bộ các thiết bị. Tải lại trang sẽ mất điểm.
+Bản cập nhật cho repo đã triển khai V5. Giải nén ZIP vào `D:\` (thư mục gốc trong ZIP là `doan-ket-quiz`), ghi đè các file trùng. ZIP chủ ý không chứa `wrangler.jsonc` và `.git` để giữ tên Worker, cấu hình deploy và lịch sử Git đang dùng. Mở `docs/index.html` bằng Chrome/Edge để thử.
 
-## Ảnh bìa
-Ảnh tư liệu: Ho Chi Minh with Vietnamese expats in France, 1946 (Wikimedia Commons, tác giả không rõ; Commons đánh dấu public domain).
-https://commons.wikimedia.org/wiki/File:Ho_Chi_Minh_with_Vietnamese_expats_in_France,_1946.jpg
+## Luật chơi
 
-Ảnh được tải từ Wikimedia khi có mạng; không nhúng bản sao vì môi trường tạo file không tải được ảnh gốc. Khi không tải được ảnh, web tự dùng bìa đỏ-vàng dạng vector với tiêu đề, toàn bộ game vẫn hoạt động offline. Có thể tải ảnh về `docs/cover.jpg` rồi đổi hằng số `PHOTO` trong `index.html` thành `./cover.jpg` nếu muốn dùng ảnh thật offline.
+- 6 đội; 22 câu theo thứ tự cố định, 12 câu đầu giữ nguyên từ V5, câu 13–22 theo Google Doc vận dụng cao.
+- Câu 1–12: 15 giây; câu 13–22: 30 giây.
+- Đáp án sai bị gạch bỏ và không thể chọn lại. Không hiện đáp án đúng khi mới sai 1–2 lần. Đồng hồ tiếp tục chạy; MC có thể đổi đội và chọn đáp án còn lại.
+- Đáp án đúng: +100 điểm cho đội được chọn, hiện lời giải, MC chuyển câu tiếp theo. Sai đủ 3 phương án: không cộng điểm, tự chuyển câu sau 0,75 giây. Hết giờ: hiện đáp án, không điểm, MC chuyển câu. Nút hiện đáp án (R) không cộng điểm.
+- Phím 1–6 chọn đội, A–D trả lời, P tạm dừng/tiếp tục, R hiện đáp án, Enter hoặc mũi tên phải sang câu đã chốt, F toàn màn hình.
+- Một máy điều khiển, không đồng bộ điện thoại; tải lại trang sẽ mất điểm.
 
-## Triển khai
-- Cloudflare Workers: kết nối GitHub repo; branch `main`, root repo, build command trống, deploy command `npx wrangler deploy`. Đã có `wrangler.jsonc` với assets `./docs`. Chỉnh tên Worker nếu cần. Chưa triển khai lên hosting thật.
-- GitHub Pages: Settings > Pages > Deploy from a branch > main > /docs > Save.
-- Host tĩnh khác: publish thư mục `docs`, không cần build.
+## Nguồn câu hỏi
 
-Nếu cập nhật repo đã có, giải nén ZIP vào thư mục cha của repo doan-ket-quiz (ví dụ D:\), đồng ý ghi đè file trùng, `git add .`, `git commit -m "Update minigame to six teams"`, `git push`. Không ghi đè lịch sử Git.
+- Câu 1–12: Google Doc minigame gốc, dữ liệu giữ từ V5: https://docs.google.com/document/d/1Nt30_mBLqYlRq1RlWOZIukjo6o_H1Xi6vAU2rIFfpVc/edit
+- Câu 13–22: https://docs.google.com/document/d/1ouwQZCoIYW0l64tSJXnBQ-it3PTt16hLxeKiawD-ls8/edit
+- Hai tài liệu không có bảng đáp án riêng trong phần văn bản đọc được. Đáp án và giải thích do người tạo web suy ra, nên nhóm kiểm tra trước buổi trình chiếu. Khóa 13–22: B, A, C, B, D, A, B, D, B, A.
+- Ảnh bìa: Wikimedia Commons, Ho Chi Minh with Vietnamese expats in France, 1946. Ảnh tải trực tuyến như V5; nếu không có mạng, bìa dự phòng vẫn hoạt động. https://commons.wikimedia.org/wiki/File:Ho_Chi_Minh_with_Vietnamese_expats_in_France,_1946.jpg
 
-## QR truy cập
-Sau khi deploy, tạo QR từ URL HTTPS công khai của Worker bằng chức năng tạo mã QR của trình duyệt hoặc công cụ QR. Điện thoại quét được link nhưng mỗi thiết bị là một phiên chơi riêng; không đồng bộ điểm hoặc phòng với máy chiếu.
+## Cập nhật GitHub
 
-## Cấu hình
-Google Doc không quy định số đội. V5 dùng 6 đội mặc định, phím 1–6 chọn đội trực tiếp.
+```cmd
+cd /d D:\doan-ket-quiz && git add docs/index.html README.md && git commit -m "V6 - 22 questions and answer elimination" && git push
+```
 
-## Kiểm thử
-Đáp án và lời giải kế thừa bản V3 (suy ra từ Google Doc không có bảng đáp án riêng); nhóm nên rà soát trước khi trình chiếu.
+Cloudflare tự deploy nếu đã kết nối repo và bật tự động triển khai; URL công khai không thay đổi nếu giữ Worker hiện tại. Không cần tạo repo mới.

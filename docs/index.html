@@ -13,43 +13,319 @@
 @media(min-width:701px) and (max-width:1430px){.teams{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));width:100%}.foot{gap:8px;padding-top:9px}.foot>.controls{justify-content:flex-end}}
 @media(max-width:700px){.teams{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}.team{padding:8px 6px;font-size:12px;white-space:nowrap}.team-key{min-width:14px;height:16px;margin-right:0}.foot>.controls{margin-left:0}.ranks{grid-template-columns:1fr}.rank{font-size:20px}}
 @media(min-width:701px) and (max-height:780px){.quiz{padding-top:24px;padding-bottom:18px;gap:10px}.answer{min-height:66px;padding-top:10px;padding-bottom:10px}.q{margin:4px 0}.feedback{padding:8px 12px}.foot{padding-top:8px}}
+
+/* V6: unified Vietnamese type, same text size across options and matching grid rows. */
+html,body,button,input,select,h1,h2,h3{font-family:Arial,"Segoe UI",sans-serif;letter-spacing:normal;font-variant-ligatures:normal}
+.cover .kicker,.section,.q,.answer,.team,.control,.feedback{letter-spacing:normal;word-spacing:normal}
+.q{font-weight:700;outline:none;word-break:normal;overflow-wrap:break-word}.answer{font-weight:600;word-break:normal;overflow-wrap:break-word}.answer>span:last-child{min-width:0}.answers{grid-auto-rows:1fr}.answer.eliminated{opacity:.64;text-decoration:line-through}.answer.eliminated .letter{text-decoration:none}.advanced .q{font-size:clamp(24px,min(2.55vw,4.5vh),40px)}.advanced .answer{font-size:clamp(17px,min(1.72vw,2.7vh),25px);line-height:1.3}.advanced .feedback{font-size:clamp(15px,min(1.45vw,2.4vh),21px)}
+@media(min-width:701px) and (max-height:780px){.advanced.quiz{padding-top:18px;gap:9px}.advanced .answer{padding-top:9px;padding-bottom:9px}.advanced .q{margin:3px 0}.advanced .feedback{padding:7px 12px}}
+@media(max-width:700px){.advanced .q{font-size:24px}.advanced .answer{font-size:17px}.answers{grid-auto-rows:auto}}
 </style>
 </head>
 <body><main id="stage"></main>
 <script>
 (()=>{'use strict';
-const raw=[["Theo tư tưởng Hồ Chí Minh, điều gì được ví như sức mạnh giúp dân tộc vượt qua khó khăn và giành thắng lợi?", ["Sự phát triển kinh tế", "Tinh thần đoàn kết", "Sức mạnh quân sự", "Sự hỗ trợ từ bên ngoài"], 1, "Đoàn kết tập hợp sức mạnh của toàn dân để vượt qua khó khăn và giành thắng lợi."], ["Câu nói nổi tiếng nào sau đây được Hồ Chí Minh đúc kết để khẳng định sức mạnh của đoàn kết?", ["Một cây làm chẳng nên non", "Đoàn kết là sức mạnh của chúng ta", "Đoàn kết, đoàn kết, đại đoàn kết – Thành công, thành công, đại thành công", "Không có gì quý hơn độc lập, tự do"], 2, "Câu nói khẳng định đoàn kết là nhân tố quan trọng dẫn tới thành công."], ["Nếu chỉ có lòng yêu nước mà không tập hợp được các lực lượng trong xã hội, cách mạng có thể gặp khó khăn gì?", ["Thiếu sức mạnh tổng hợp để đi đến thắng lợi", "Không thể xây dựng nền kinh tế", "Không thể phát triển văn hóa", "Không thể hình thành các tổ chức xã hội"], 0, "Lòng yêu nước cần được tổ chức thành sức mạnh chung của các lực lượng xã hội."], ["Chiến thắng Cách mạng Tháng Tám năm 1945 gắn liền với khối đoàn kết trong tổ chức nào?", ["Mặt trận Liên Việt", "Mặt trận Tổ quốc Việt Nam", "Mặt trận Dân chủ", "Mặt trận Việt Minh"], 3, "Mặt trận Việt Minh tập hợp lực lượng yêu nước, góp phần vào thắng lợi của Cách mạng Tháng Tám."], ["Theo tài liệu, đại đoàn kết dân tộc có đặc điểm nào sau đây?", ["Chỉ cần thiết trong thời chiến", "Là giải pháp tạm thời khi đất nước gặp khó khăn", "Là chiến lược xuyên suốt và lâu dài của cách mạng", "Chỉ được thực hiện khi có sự chỉ đạo từ bên ngoài"], 2, "Đại đoàn kết là vấn đề chiến lược, không phải sách lược nhất thời."], ["Ngày 03/03/1951, Hồ Chí Minh đã nêu mục đích của Đảng Lao động Việt Nam bằng 8 chữ nào?", ["Độc lập dân tộc, tự do hạnh phúc", "Đoàn kết toàn dân, phụng sự Tổ quốc", "Toàn dân kháng chiến, toàn diện kháng chiến", "Đoàn kết quốc tế, phát triển đất nước"], 1, "Mục đích được nêu bằng tám chữ: Đoàn kết toàn dân, phụng sự Tổ quốc."], ["Câu nói “Dễ trăm lần không dân cũng chịu, khó vạn lần dân liệu cũng xong” muốn nhấn mạnh điều gì?", ["Vai trò quyết định của quần chúng nhân dân", "Vai trò của đội ngũ cán bộ", "Sức mạnh của khoa học kỹ thuật", "Tầm quan trọng của kinh tế"], 0, "Nhân dân là chủ thể và nguồn sức mạnh của cách mạng."], ["Một phong trào có đường lối đúng đắn nhưng không thu hút được người dân tham gia. Theo tư tưởng đại đoàn kết, phong trào đó đang thiếu điều gì?", ["Nguồn tài chính", "Sự hỗ trợ quốc tế", "Khối đại đoàn kết dân tộc", "Phương tiện truyền thông"], 2, "Đường lối cần được nhân dân hưởng ứng và thực hiện để trở thành sức mạnh thực tế."], ["Trong thời kỳ xây dựng chủ nghĩa xã hội, nhiệm vụ tuyên truyền được Hồ Chí Minh nhấn mạnh gồm những nội dung nào?", ["Đoàn kết, phát triển kinh tế và mở rộng giao thương", "Đoàn kết, xây dựng chủ nghĩa xã hội và đấu tranh thống nhất nước nhà", "Đoàn kết, phát triển giáo dục và văn hóa", "Đoàn kết, xây dựng quân đội và bảo vệ biên giới"], 1, "Nhiệm vụ gắn đoàn kết với xây dựng chủ nghĩa xã hội và đấu tranh thống nhất nước nhà."], ["Nếu ví cách mạng như một đội chơi cần phối hợp để chiến thắng, yếu tố nào dưới đây quan trọng nhất theo tư tưởng đại đoàn kết?", ["Mỗi người tự hoàn thành nhiệm vụ riêng", "Chỉ cần một cá nhân xuất sắc dẫn dắt", "Tập hợp các lực lượng và cùng hướng đến mục tiêu chung", "Tập trung vào số lượng thành viên mà không cần phối hợp"], 2, "Sức mạnh chung đến từ việc tập hợp và phối hợp các lực lượng vì một mục tiêu."], ["Theo tư tưởng Hồ Chí Minh, khái niệm “Dân” và “Nhân dân” bao gồm những ai?", ["Chỉ những người lao động", "Chỉ những người cùng dân tộc và tôn giáo", "Tất cả người Việt Nam, không phân biệt dân tộc, tôn giáo, giàu nghèo, giới tính", "Chỉ những người đang sinh sống trong nước"], 2, "Quan niệm về nhân dân mang tính rộng rãi, không phân biệt thành phần, dân tộc, tôn giáo hay giới tính."], ["Một người Việt Nam sinh sống ở nước ngoài, dù xa quê hương nhưng luôn hướng về Tổ quốc và mong muốn đóng góp cho đất nước. Theo tư tưởng đại đoàn kết, người đó có được tập hợp không?", ["Có, vì tinh thần hướng về quê hương là cơ sở để đoàn kết", "Không, vì phải sinh sống trong nước", "Không, vì không trực tiếp tham gia hoạt động cách mạng", "Chỉ được tham gia khi có điều kiện kinh tế"], 0, "Tinh thần yêu nước và mong muốn đóng góp là cơ sở để tập hợp người Việt Nam ở trong và ngoài nước."], ["Hồ Chí Minh từng đưa ra tiêu chuẩn để đoàn kết với mọi người như thế nào?", ["Có địa vị xã hội và tài sản", "Có tài, có đức, có sức, có lòng phụng sự Tổ quốc và phục vụ nhân dân", "Có trình độ học vấn cao", "Có cùng quan điểm trong mọi vấn đề"], 1, "Tiêu chuẩn nhấn mạnh khả năng, phẩm chất và tinh thần phụng sự Tổ quốc, phục vụ nhân dân."], ["Theo bạn, tình huống nào thể hiện rõ nhất tinh thần đại đoàn kết toàn dân?", ["Chỉ những người có cùng hoàn cảnh mới hợp tác", "Mỗi nhóm tự giải quyết công việc của mình", "Các cá nhân khác nhau cùng chung tay thực hiện một mục tiêu vì cộng đồng", "Chỉ người đứng đầu được quyền đóng góp ý kiến"], 2, "Đại đoàn kết hướng đến việc quy tụ những con người khác nhau vì lợi ích chung."], ["Truyền thống nào được xem là nền tảng quan trọng để xây dựng khối đại đoàn kết dân tộc?", ["Truyền thống cạnh tranh và phát triển", "Truyền thống yêu nước, nhân nghĩa và đoàn kết", "Truyền thống kinh doanh và buôn bán", "Truyền thống chinh phục thiên nhiên"], 1, "Truyền thống yêu nước, nhân nghĩa và đoàn kết là nền tảng tinh thần của dân tộc."], ["Hồ Chí Minh đã dùng hình ảnh nào để nói về sự khác biệt giữa các thành viên nhưng vẫn thống nhất trong một khối đoàn kết?", ["Những viên gạch xây nên ngôi nhà", "Những cánh chim trên bầu trời", "Bàn tay có ngón ngắn, ngón dài", "Những dòng sông cùng chảy ra biển"], 2, "Các ngón tay dài ngắn khác nhau nhưng vẫn cùng thuộc một bàn tay, tượng trưng cho sự thống nhất trong khác biệt."], ["Một thành viên trong tập thể từng mắc sai lầm nhưng thực sự muốn sửa đổi và đóng góp. Cách ứng xử nào phù hợp nhất với tinh thần khoan dung của Hồ Chí Minh?", ["Loại bỏ người đó khỏi tập thể", "Không cho người đó cơ hội tham gia", "Dùng sự chân thành để cảm hóa, giúp đỡ họ tiến bộ", "Nhắc lại sai lầm của họ trong mọi hoạt động"], 2, "Khoan dung và chân thành giúp người từng mắc sai lầm có cơ hội sửa đổi, tiến bộ."], ["Trong hình ảnh so sánh của Hồ Chí Minh, điều gì khiến sông to biển rộng có thể chứa được nhiều nước?", ["Vì có nhiều nguồn nước đổ vào", "Vì có độ lượng rộng và sâu", "Vì có diện tích lớn hơn", "Vì nước luôn tự chảy ra ngoài"], 1, "Hình ảnh sông to biển rộng nhấn mạnh lòng khoan dung, độ lượng để quy tụ mọi người."], ["Theo Hồ Chí Minh, lực lượng nào là “nền gốc” vững chắc của khối đại đoàn kết dân tộc?", ["Công nhân, nông dân và các tầng lớp lao động khác", "Chỉ đội ngũ trí thức", "Chỉ những người có địa vị trong xã hội", "Các tổ chức kinh tế nước ngoài"], 0, "Công nhân, nông dân và các tầng lớp lao động khác là nền gốc của khối đoàn kết toàn dân."], ["Một nhóm sinh viên có người giỏi, người chưa giỏi; người hướng ngoại, người ít nói. Để cùng hoàn thành dự án, nhóm nên làm gì?", ["Chỉ giao việc cho những người giỏi nhất", "Loại bỏ những thành viên ít nói", "Tôn trọng sự khác biệt, tin tưởng và phát huy khả năng của từng người", "Để mỗi người làm việc riêng mà không cần trao đổi"], 2, "Tôn trọng và phát huy thế mạnh riêng của mỗi người giúp tập thể phối hợp hiệu quả hơn."], ["Theo tư tưởng Hồ Chí Minh, đại đoàn kết dân tộc cần được tổ chức thành lực lượng vật chất thông qua tổ chức nào?", ["Quốc hội", "Mặt trận Dân tộc Thống nhất", "Chính phủ", "Hội đồng nhân dân"], 1, "Mặt trận Dân tộc Thống nhất là hình thức tổ chức của khối đại đoàn kết toàn dân."], ["Vì sao một cộng đồng có hàng triệu người nhưng chưa chắc đã tạo thành sức mạnh lớn?", ["Vì số lượng người không quan trọng", "Vì mọi người đều có suy nghĩ khác nhau", "Vì đông người nhưng thiếu tổ chức và mục tiêu chung thì khó tạo sức mạnh", "Vì cần có sự hỗ trợ từ nước ngoài"], 2, "Số lượng chỉ trở thành sức mạnh tổng hợp khi có tổ chức, phối hợp và mục tiêu chung."], ["Mặt trận Việt Minh được thành lập vào năm nào?", ["1930", "1936", "1941", "1946"], 2, "Mặt trận Việt Minh được thành lập năm 1941."], ["Dù tên gọi của Mặt trận thay đổi qua các thời kỳ, mục tiêu chung vẫn là gì?", ["Phát triển kinh tế tư nhân", "Độc lập dân tộc, thống nhất Tổ quốc, tự do và hạnh phúc của nhân dân", "Mở rộng quan hệ thương mại quốc tế", "Phát triển riêng một tầng lớp xã hội"], 1, "Các hình thức Mặt trận hướng đến mục tiêu chung là lợi ích dân tộc và hạnh phúc của nhân dân."], ["Liên minh nào là nền tảng xây dựng Mặt trận Dân tộc Thống nhất?", ["Công nhân – Nông dân – Trí thức", "Công nhân – Doanh nhân – Quân nhân", "Nông dân – Học sinh – Sinh viên", "Trí thức – Doanh nhân – Nghệ sĩ"], 0, "Liên minh công nhân, nông dân và trí thức là nền tảng của khối đại đoàn kết."], ["Trong Mặt trận Dân tộc Thống nhất, Đảng Cộng sản giữ vai trò nào?", ["Chỉ là cơ quan giám sát", "Là lực lượng lãnh đạo và đồng thời là một thành viên của Mặt trận", "Là tổ chức đứng ngoài Mặt trận", "Chỉ tham gia khi có chiến tranh"], 1, "Đảng vừa lãnh đạo, vừa là thành viên của Mặt trận."], ["Nếu các thành viên trong một tập thể có lợi ích khác nhau, điều gì cần được đặt lên trên hết theo nguyên tắc hoạt động của Mặt trận?", ["Lợi ích của cá nhân đứng đầu", "Lợi ích của nhóm đông người nhất", "Lợi ích tối cao của dân tộc", "Lợi ích của từng cá nhân riêng biệt"], 2, "Lợi ích tối cao của dân tộc là cơ sở thống nhất các lợi ích khác nhau."], ["Khi các thành viên Mặt trận có ý kiến khác nhau, cách giải quyết nào phù hợp với nguyên tắc hiệp thương dân chủ?", ["Người lãnh đạo tự quyết định", "Bỏ qua ý kiến của nhóm thiểu số", "Công khai bàn bạc, trao đổi để đi đến nhất trí", "Để từng người tự thực hiện theo ý mình"], 2, "Hiệp thương dân chủ đòi hỏi bàn bạc, trao đổi và tìm sự thống nhất."], ["Phương châm “cầu đồng tồn dị” có thể hiểu đơn giản là gì?", ["Tìm điểm chung, tôn trọng khác biệt và cùng hướng đến mục tiêu chung", "Buộc mọi người phải có suy nghĩ giống nhau", "Tránh hợp tác với những người có quan điểm khác biệt", "Chỉ tập trung vào những điểm bất đồng"], 0, "Cầu đồng tồn dị là tìm điểm tương đồng, đồng thời chấp nhận những khác biệt phù hợp với mục tiêu chung."], ["Một nhóm làm việc luôn đồng ý với nhau để giữ hòa khí, dù phát hiện có người làm sai nhưng không ai góp ý. Theo nguyên tắc của Mặt trận, nhóm đang thiếu điều gì?", ["Sự đoàn kết", "Tinh thần vừa đoàn kết vừa đấu tranh, góp ý chân thành để cùng tiến bộ", "Sự phân công công việc", "Số lượng thành viên"], 1, "Đoàn kết chân thành không có nghĩa là né tránh sai lầm; cần góp ý xây dựng để cùng tiến bộ."]];
-const categories=['I. Vai trò của đại đoàn kết','II. Lực lượng đại đoàn kết','III. Hình thức tổ chức'];
-const TEAMS=['Đội 1','Đội 2','Đội 3','Đội 4','Đội 5','Đội 6'],SECONDS=30,LETTERS='ABCD';
+const raw=[
+  [
+    "Theo tư tưởng Hồ Chí Minh, điều gì được ví như sức mạnh giúp dân tộc vượt qua khó khăn và giành thắng lợi?",
+    [
+      "Sự phát triển kinh tế",
+      "Tinh thần đoàn kết",
+      "Sức mạnh quân sự",
+      "Sự hỗ trợ từ bên ngoài"
+    ],
+    1,
+    "Đoàn kết tập hợp sức mạnh của toàn dân để vượt qua khó khăn và giành thắng lợi."
+  ],
+  [
+    "Câu nói nổi tiếng nào sau đây được Hồ Chí Minh đúc kết để khẳng định sức mạnh của đoàn kết?",
+    [
+      "Một cây làm chẳng nên non",
+      "Đoàn kết là sức mạnh của chúng ta",
+      "Đoàn kết, đoàn kết, đại đoàn kết – Thành công, thành công, đại thành công",
+      "Không có gì quý hơn độc lập, tự do"
+    ],
+    2,
+    "Câu nói khẳng định đoàn kết là nhân tố quan trọng dẫn tới thành công."
+  ],
+  [
+    "Nếu chỉ có lòng yêu nước mà không tập hợp được các lực lượng trong xã hội, cách mạng có thể gặp khó khăn gì?",
+    [
+      "Thiếu sức mạnh tổng hợp để đi đến thắng lợi",
+      "Không thể xây dựng nền kinh tế",
+      "Không thể phát triển văn hóa",
+      "Không thể hình thành các tổ chức xã hội"
+    ],
+    0,
+    "Lòng yêu nước cần được tổ chức thành sức mạnh chung của các lực lượng xã hội."
+  ],
+  [
+    "Chiến thắng Cách mạng Tháng Tám năm 1945 gắn liền với khối đoàn kết trong tổ chức nào?",
+    [
+      "Mặt trận Liên Việt",
+      "Mặt trận Tổ quốc Việt Nam",
+      "Mặt trận Dân chủ",
+      "Mặt trận Việt Minh"
+    ],
+    3,
+    "Mặt trận Việt Minh tập hợp lực lượng yêu nước, góp phần vào thắng lợi của Cách mạng Tháng Tám."
+  ],
+  [
+    "Theo tài liệu, đại đoàn kết dân tộc có đặc điểm nào sau đây?",
+    [
+      "Chỉ cần thiết trong thời chiến",
+      "Là giải pháp tạm thời khi đất nước gặp khó khăn",
+      "Là chiến lược xuyên suốt và lâu dài của cách mạng",
+      "Chỉ được thực hiện khi có sự chỉ đạo từ bên ngoài"
+    ],
+    2,
+    "Đại đoàn kết là vấn đề chiến lược, không phải sách lược nhất thời."
+  ],
+  [
+    "Ngày 03/03/1951, Hồ Chí Minh đã nêu mục đích của Đảng Lao động Việt Nam bằng 8 chữ nào?",
+    [
+      "Độc lập dân tộc, tự do hạnh phúc",
+      "Đoàn kết toàn dân, phụng sự Tổ quốc",
+      "Toàn dân kháng chiến, toàn diện kháng chiến",
+      "Đoàn kết quốc tế, phát triển đất nước"
+    ],
+    1,
+    "Mục đích được nêu bằng tám chữ: Đoàn kết toàn dân, phụng sự Tổ quốc."
+  ],
+  [
+    "Câu nói “Dễ trăm lần không dân cũng chịu, khó vạn lần dân liệu cũng xong” muốn nhấn mạnh điều gì?",
+    [
+      "Vai trò quyết định của quần chúng nhân dân",
+      "Vai trò của đội ngũ cán bộ",
+      "Sức mạnh của khoa học kỹ thuật",
+      "Tầm quan trọng của kinh tế"
+    ],
+    0,
+    "Nhân dân là chủ thể và nguồn sức mạnh của cách mạng."
+  ],
+  [
+    "Một phong trào có đường lối đúng đắn nhưng không thu hút được người dân tham gia. Theo tư tưởng đại đoàn kết, phong trào đó đang thiếu điều gì?",
+    [
+      "Nguồn tài chính",
+      "Sự hỗ trợ quốc tế",
+      "Khối đại đoàn kết dân tộc",
+      "Phương tiện truyền thông"
+    ],
+    2,
+    "Đường lối cần được nhân dân hưởng ứng và thực hiện để trở thành sức mạnh thực tế."
+  ],
+  [
+    "Trong thời kỳ xây dựng chủ nghĩa xã hội, nhiệm vụ tuyên truyền được Hồ Chí Minh nhấn mạnh gồm những nội dung nào?",
+    [
+      "Đoàn kết, phát triển kinh tế và mở rộng giao thương",
+      "Đoàn kết, xây dựng chủ nghĩa xã hội và đấu tranh thống nhất nước nhà",
+      "Đoàn kết, phát triển giáo dục và văn hóa",
+      "Đoàn kết, xây dựng quân đội và bảo vệ biên giới"
+    ],
+    1,
+    "Nhiệm vụ gắn đoàn kết với xây dựng chủ nghĩa xã hội và đấu tranh thống nhất nước nhà."
+  ],
+  [
+    "Nếu ví cách mạng như một đội chơi cần phối hợp để chiến thắng, yếu tố nào dưới đây quan trọng nhất theo tư tưởng đại đoàn kết?",
+    [
+      "Mỗi người tự hoàn thành nhiệm vụ riêng",
+      "Chỉ cần một cá nhân xuất sắc dẫn dắt",
+      "Tập hợp các lực lượng và cùng hướng đến mục tiêu chung",
+      "Tập trung vào số lượng thành viên mà không cần phối hợp"
+    ],
+    2,
+    "Sức mạnh chung đến từ việc tập hợp và phối hợp các lực lượng vì một mục tiêu."
+  ],
+  [
+    "Theo tư tưởng Hồ Chí Minh, khái niệm “Dân” và “Nhân dân” bao gồm những ai?",
+    [
+      "Chỉ những người lao động",
+      "Chỉ những người cùng dân tộc và tôn giáo",
+      "Tất cả người Việt Nam, không phân biệt dân tộc, tôn giáo, giàu nghèo, giới tính",
+      "Chỉ những người đang sinh sống trong nước"
+    ],
+    2,
+    "Quan niệm về nhân dân mang tính rộng rãi, không phân biệt thành phần, dân tộc, tôn giáo hay giới tính."
+  ],
+  [
+    "Một người Việt Nam sinh sống ở nước ngoài, dù xa quê hương nhưng luôn hướng về Tổ quốc và mong muốn đóng góp cho đất nước. Theo tư tưởng đại đoàn kết, người đó có được tập hợp không?",
+    [
+      "Có, vì tinh thần hướng về quê hương là cơ sở để đoàn kết",
+      "Không, vì phải sinh sống trong nước",
+      "Không, vì không trực tiếp tham gia hoạt động cách mạng",
+      "Chỉ được tham gia khi có điều kiện kinh tế"
+    ],
+    0,
+    "Tinh thần yêu nước và mong muốn đóng góp là cơ sở để tập hợp người Việt Nam ở trong và ngoài nước."
+  ],
+  [
+    "Trong tư tưởng Hồ Chí Minh, yếu tố nào vừa là mục tiêu xuyên suốt của cách mạng, vừa là mẫu số chung cao nhất để quy tụ mọi tầng lớp vào khối đại đoàn kết toàn dân tộc?",
+    [
+      "Xóa bỏ triệt để sự khác biệt giai cấp.",
+      "Độc lập dân tộc gắn liền với chủ nghĩa xã hội.",
+      "Thống nhất tuyệt đối về hệ tư tưởng.",
+      "Thực hiện chế độ công hữu toàn diện."
+    ],
+    1,
+    "Độc lập dân tộc gắn liền với chủ nghĩa xã hội là mục tiêu chung để tập hợp các lực lượng."
+  ],
+  [
+    "Truyền thống yêu nước, nhân nghĩa khi được Hồ Chí Minh nâng tầm thành chiến lược đại đoàn kết toàn dân tộc đã chuyển hóa từ yếu tố tinh thần thành điều gì?",
+    [
+      "Động lực chủ yếu và nhân tố quyết định thắng lợi cách mạng.",
+      "Nền tảng tư tưởng và kim chỉ nam cho hành động của Đảng.",
+      "Phương thức lãnh đạo duy nhất của Nhà nước kiểu mới.",
+      "Tiền đề lý luận thay thế cho học thuyết đấu tranh giai cấp."
+    ],
+    0,
+    "Đại đoàn kết biến truyền thống yêu nước, nhân nghĩa thành sức mạnh thực tiễn của cách mạng."
+  ],
+  [
+    "Vận dụng sáng tạo chủ nghĩa Mác - Lênin vào xây dựng nền tảng khối đại đoàn kết toàn dân tộc, Hồ Chí Minh đã bổ sung lực lượng nào vào khối liên minh công - nông?",
+    [
+      "Tầng lớp tiểu tư sản thành thị.",
+      "Giai cấp tư sản dân tộc yêu nước.",
+      "Đội ngũ trí thức cách mạng.",
+      "Các nhân sĩ, địa chủ có tinh thần dân tộc."
+    ],
+    2,
+    "Liên minh công nhân, nông dân và trí thức là nền tảng của khối đại đoàn kết."
+  ],
+  [
+    "(Liên kết Chương 3 & Chương 5): Vì sao cùng xác định cách mạng là sự nghiệp của toàn dân (Chương 3), Hồ Chí Minh vẫn nhấn mạnh Mặt trận dân tộc thống nhất phải có nền tảng vững chắc (Chương 5)?",
+    [
+      "Để loại bỏ hoàn toàn các giai cấp bóc lột khỏi đời sống chính trị.",
+      "Để giữ vững định hướng cách mạng và tránh nguy cơ phân hóa nội bộ.",
+      "Để thay thế vai trò lãnh đạo trực tiếp của Đảng Cộng sản.",
+      "Để thu hẹp phạm vi đoàn kết chỉ trong các giai cấp lao động."
+    ],
+    1,
+    "Nền tảng vững chắc giúp giữ định hướng và củng cố sự thống nhất trong Mặt trận rộng rãi."
+  ],
+  [
+    "Để thực hiện nguyên tắc kết hợp sức mạnh dân tộc với sức mạnh thời đại trong xây dựng chủ nghĩa xã hội, đoàn kết quốc tế phải dựa trên tiền đề nào?",
+    [
+      "Sự viện trợ toàn diện về kinh tế của các nước xã hội chủ nghĩa.",
+      "Sự đồng nhất về mô hình thể chế chính trị giữa các quốc gia.",
+      "Ưu tiên lợi ích quốc tế cao hơn lợi ích độc lập của dân tộc.",
+      "Nội lực đại đoàn kết dân tộc và đường lối độc lập, tự chủ."
+    ],
+    3,
+    "Phát huy nội lực và giữ vững độc lập, tự chủ là cơ sở để tranh thủ sức mạnh quốc tế."
+  ],
+  [
+    "Bản chất giai cấp công nhân thống nhất với tính nhân dân và tính dân tộc của Đảng quy định vị trí nào của Đảng trong Mặt trận dân tộc thống nhất?",
+    [
+      "Vừa là thành viên bình đẳng, vừa là lực lượng lãnh đạo Mặt trận.",
+      "Là cơ quan quyền lực nhà nước cao nhất điều hành Mặt trận.",
+      "Là tổ chức đứng trên Mặt trận để ra mệnh lệnh hành chính.",
+      "Là thành viên duy nhất quyết định mọi nghị quyết của Mặt trận."
+    ],
+    0,
+    "Đảng vừa là thành viên, vừa lãnh đạo Mặt trận thông qua đường lối, vận động và thuyết phục."
+  ],
+  [
+    "Khác với Nhà nước quản lý xã hội bằng Hiến pháp và pháp luật, Mặt trận dân tộc thống nhất quy tụ nhân dân chủ yếu bằng phương thức nào?",
+    [
+      "Ban hành các chế tài hành chính bắt buộc mọi công dân tuân thủ.",
+      "Hiệp thương dân chủ, thuyết phục, vận động và nêu gương.",
+      "Phân bổ trực tiếp ngân sách nhà nước cho từng tầng lớp xã hội.",
+      "Thống nhất hóa mọi tổ chức chính trị - xã hội thành một đầu mối."
+    ],
+    1,
+    "Mặt trận đề cao hiệp thương dân chủ và vận động trên cơ sở tự nguyện."
+  ],
+  [
+    "Trong giai đoạn đẩy mạnh công nghiệp hóa, hiện đại hóa và hội nhập quốc tế hiện nay, nguy cơ nào được xem là thách thức trực tiếp nhất làm suy yếu khối đại đoàn kết toàn dân tộc theo tinh thần tư tưởng Hồ Chí Minh?",
+    [
+      "Sự đa dạng hóa các loại hình sở hữu kinh tế dẫn đến hình thành nhiều tầng lớp xã hội có nhu cầu và sở thích văn hóa khác nhau.",
+      "Sự mở rộng giao lưu văn hóa quốc tế làm gia tăng tốc độ tiếp thu các thành tựu khoa học - công nghệ hiện đại của thế hệ trẻ.",
+      "Việc điều chỉnh cơ cấu lao động từ khu vực nông nghiệp sang khu vực công nghiệp và dịch vụ làm thay đổi tỷ trọng giai cấp nông dân.",
+      "Tình trạng quan liêu, tham nhũng, suy thoái đạo đức của một bộ phận cán bộ làm xói mòn niềm tin của nhân dân đối với Đảng và chế độ."
+    ],
+    3,
+    "Quan liêu, tham nhũng và suy thoái đạo đức trực tiếp làm suy giảm niềm tin, từ đó ảnh hưởng đến sự đoàn kết."
+  ],
+  [
+    "Trong tư tưởng Hồ Chí Minh, luận điểm \"Đoàn kết, đoàn kết, đại đoàn kết / Thành công, thành công, đại thành công\" phản ánh mối quan hệ bản chất nào của cách mạng Việt Nam?",
+    [
+      "Mối quan hệ giữa tính chất lâu dài của chiến lược tập hợp lực lượng với mục tiêu giành chính quyền trong từng giai đoạn cụ thể.",
+      "Mối quan hệ nhân quả mang tính quy luật giữa quy mô, chiều sâu của khối thống nhất lực lượng với tầm vóc thắng lợi của sự nghiệp cách mạng.",
+      "Mối quan hệ giữa phương pháp tuyên truyền, vận động quần chúng với nghệ thuật tận dụng thời cơ khách quan của Đảng lãnh đạo.",
+      "Mối quan hệ giữa việc củng cố liên minh giai cấp công - nông làm nòng cốt với việc mở rộng quan hệ đối ngoại đa phương."
+    ],
+    1,
+    "Luận điểm nhấn mạnh mối liên hệ giữa sức mạnh của khối đoàn kết và quy mô thắng lợi."
+  ],
+  [
+    "Vì sao thực hành đạo đức cách mạng \"chí công vô tư\", chống chủ nghĩa cá nhân lại có ý nghĩa sống còn đối với đại đoàn kết toàn dân tộc?",
+    [
+      "Vì chủ nghĩa cá nhân làm xói mòn niềm tin của nhân dân và phá vỡ sự đồng thuận xã hội.",
+      "Vì đạo đức cách mạng là điều kiện pháp lý bắt buộc để công dân gia nhập Mặt trận.",
+      "Vì thực hành chí công vô tư giúp xóa bỏ ngay mọi mâu thuẫn lợi ích trong xã hội.",
+      "Vì đạo đức cá nhân của cán bộ có thể thay thế hoàn toàn hệ thống pháp luật nhà nước."
+    ],
+    0,
+    "Chí công vô tư góp phần củng cố niềm tin, hạn chế chủ nghĩa cá nhân và giữ gìn sự đồng thuận."
+  ]
+];
+const categories=['I. Vai trò của đại đoàn kết','II. Lực lượng đại đoàn kết','III. Vận dụng cao'];
+const TEAMS=['Đội 1','Đội 2','Đội 3','Đội 4','Đội 5','Đội 6'],BASIC_SECONDS=15,ADVANCED_SECONDS=30,LETTERS='ABCD';
 const PHOTO='https://upload.wikimedia.org/wikipedia/commons/1/18/Ho_Chi_Minh_with_Vietnamese_expats_in_France%2C_1946.jpg';
 const stage=document.getElementById('stage');
-let view='cover',index=0,activeTeam=0,scores=TEAMS.map(()=>0),log=[],locked=false,paused=false,remaining=SECONDS*1000,deadline=0,interval=null,sound=true,audio=null;
+let view='cover',index=0,activeTeam=0,scores=TEAMS.map(()=>0),log=[],locked=false,paused=false,remaining=BASIC_SECONDS*1000,deadline=0,interval=null,autoNext=null,wrongChoices=new Set(),sound=true,audio=null;
 const $=id=>document.getElementById(id);
 function el(tag,cls,text){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n}
 function btn(cls,text,handler){const n=el('button',cls,text);n.type='button';n.addEventListener('click',handler);return n}
 function stop(){if(interval!==null){clearInterval(interval);interval=null}}
-function showCover(){stop();view='cover';stage.innerHTML=`<button type="button" id="cover" class="cover" aria-label="Bắt đầu minigame"><svg class="art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="1600" height="900" fill="#7d2128"/><path d="M950 0H1600V900H720Z" fill="#912b32"/><path d="M1040 0H1600V900H820Z" fill="#aa343a"/><g transform="translate(1220 450)"><path d="M0 -155 36 -50 147 -48 58 20 91 126 0 62 -91 126 -58 20 -147 -48 -36 -50Z" fill="#e9bd68"/></g><path d="M0 850H1600V900H0Z" fill="#d9b16b" opacity=".8"/></svg><img class="photo" alt="" referrerpolicy="no-referrer"><span class="shade"></span><span class="title-art"><span class="kicker">Minigame</span><h1>Đại đoàn kết<br>toàn dân tộc</h1><span class="rule"></span></span><span class="photo-credit">Ảnh tư liệu 1946 · Wikimedia Commons</span></button>`;
+function cancelNext(){if(autoNext!==null){clearTimeout(autoNext);autoNext=null}}
+function duration(){return index<12?BASIC_SECONDS:ADVANCED_SECONDS}
+function showCover(){stop();cancelNext();view='cover';stage.innerHTML=`<button type="button" id="cover" class="cover" aria-label="Bắt đầu minigame"><svg class="art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="1600" height="900" fill="#7d2128"/><path d="M950 0H1600V900H720Z" fill="#912b32"/><path d="M1040 0H1600V900H820Z" fill="#aa343a"/><g transform="translate(1220 450)"><path d="M0 -155 36 -50 147 -48 58 20 91 126 0 62 -91 126 -58 20 -147 -48 -36 -50Z" fill="#e9bd68"/></g><path d="M0 850H1600V900H0Z" fill="#d9b16b" opacity=".8"/></svg><img class="photo" alt="" referrerpolicy="no-referrer"><span class="shade"></span><span class="title-art"><span class="kicker">Minigame</span><h1>Đại đoàn kết<br>toàn dân tộc</h1><span class="rule"></span></span><span class="photo-credit">Ảnh tư liệu 1946 · Wikimedia Commons</span></button>`;
 const cover=$('cover'),photo=cover.querySelector('.photo');photo.addEventListener('load',()=>cover.classList.add('photo-ready'));photo.addEventListener('error',()=>cover.classList.remove('photo-ready'));photo.src=PHOTO;cover.onclick=startGame;cover.focus({preventScroll:true});}
-function startGame(){stop();index=0;activeTeam=0;scores=TEAMS.map(()=>0);log=[];view='quiz';renderQuestion()}
-function renderQuestion(){stop();view='quiz';locked=false;paused=false;remaining=SECONDS*1000;const [question,options]=raw[index];stage.innerHTML=`<section class="quiz" aria-label="Câu hỏi"><header class="slide-head"><span class="section" id="category"></span><span class="counter" id="counter"></span><span class="time" id="time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v5l3 2M9 2h6"/></svg><span id="seconds"></span></span></header><div class="track" aria-hidden="true"><span id="bar"></span></div><h1 class="q" id="question" tabindex="-1"></h1><div class="answers" id="answers"></div><div class="feedback" id="feedback" role="status" hidden></div><footer class="foot"><div class="teams" id="teams"></div><div class="controls" id="controls"></div></footer></section>`;
-$('category').textContent=categories[Math.floor(index/10)];$('counter').append('Câu ',el('strong','',String(index+1).padStart(2,'0')),' / '+raw.length);$('question').textContent=question;
+function startGame(){stop();cancelNext();index=0;activeTeam=0;scores=TEAMS.map(()=>0);log=[];view='quiz';renderQuestion()}
+function renderQuestion(){stop();cancelNext();view='quiz';locked=false;paused=false;wrongChoices=new Set();remaining=duration()*1000;const [question,options]=raw[index];stage.innerHTML=`<section class="quiz${index>=12?' advanced':''}" aria-label="Câu hỏi"><header class="slide-head"><span class="section" id="category"></span><span class="counter" id="counter"></span><span class="time" id="time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v5l3 2M9 2h6"/></svg><span id="seconds"></span></span></header><div class="track" aria-hidden="true"><span id="bar"></span></div><h1 class="q" id="question" tabindex="-1"></h1><div class="answers" id="answers"></div><div class="feedback" id="feedback" role="status" hidden></div><footer class="foot"><div class="teams" id="teams"></div><div class="controls" id="controls"></div></footer></section>`;
+$('category').textContent=categories[index>=12?2:index>=10?1:0];$('counter').append('Câu ',el('strong','',String(index+1).padStart(2,'0')),' / '+raw.length);$('question').textContent=question;
 options.forEach((option,i)=>{const b=btn('answer','',()=>finish(i,'answer'));b.setAttribute('aria-keyshortcuts',LETTERS[i]);b.append(el('span','letter',LETTERS[i]),el('span','',option));$('answers').append(b)});
 renderTeams();const c=$('controls');const pause=btn('control','Tạm dừng',togglePause);pause.id='pause';const reveal=btn('control','Hiện đáp án',()=>finish(null,'reveal'));reveal.id='reveal';const next=btn('control primary',index===raw.length-1?'Kết quả →':'Tiếp theo →',advance);next.id='next';next.disabled=true;c.append(pause,reveal,next,iconButton('Âm thanh','sound',sound?'<path d="M3 9v6h4l5 4V5L7 9z"/><path d="M16 9c2 2 2 4 0 6m3-9c4 4 4 8 0 12"/>':'<path d="M3 9v6h4l5 4V5L7 9zM16 9l5 6m0-6-5 6"/>',toggleSound),iconButton('Toàn màn hình','full','<path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/>',fullscreen),iconButton('Về bìa','home','<path d="m3 11 9-8 9 8M5 10v10h14V10M10 20v-6h4v6"/>',home));
 updateTimer();resume();$('question').focus({preventScroll:true});}
 function iconButton(label,id,shape,handler){const b=btn('control icon-btn','',handler);b.id=id;b.title=label;b.setAttribute('aria-label',label);b.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${shape}</svg>`;return b}
 function selectTeam(i){if(view!=='quiz'||locked||i<0||i>=TEAMS.length)return;activeTeam=i;renderTeams()}
 function renderTeams(){const wrap=$('teams');wrap.replaceChildren();TEAMS.forEach((name,i)=>{const b=btn('team'+(i===activeTeam?' selected':''),'',()=>selectTeam(i));b.disabled=locked;b.setAttribute('aria-pressed',String(i===activeTeam));b.title='Chọn '+name+' (phím '+(i+1)+')';b.setAttribute('aria-keyshortcuts',String(i+1));b.append(el('span','team-key',String(i+1)),name,el('b','',String(scores[i])));wrap.append(b)})}
-function updateTimer(){if(view!=='quiz')return;const sec=Math.max(0,Math.ceil(remaining/1000));$('seconds').textContent=sec+'s';$('time').classList.toggle('low',sec<=5);$('bar').style.width=(remaining/(SECONDS*1000)*100)+'%'}
+function updateTimer(){if(view!=='quiz')return;const sec=Math.max(0,Math.ceil(remaining/1000));$('seconds').textContent=sec+'s';$('time').classList.toggle('low',sec<=5);$('bar').style.width=(remaining/(duration()*1000)*100)+'%'}
 function resume(){stop();deadline=Date.now()+remaining;interval=setInterval(tick,100)}
 function tick(){if(view!=='quiz'||locked||paused)return;remaining=Math.max(0,deadline-Date.now());updateTimer();if(remaining===0)finish(null,'timeout')}
 function togglePause(){if(view!=='quiz'||locked)return;if(!paused){tick();if(locked)return;paused=true;stop();$('pause').textContent='Tiếp tục'}else{paused=false;$('pause').textContent='Tạm dừng';resume()}}
-function finish(selected,reason){if(view!=='quiz'||locked)return;if(reason==='answer'&&!paused&&Date.now()>=deadline){selected=null;reason='timeout';remaining=0;updateTimer()}locked=true;stop();const q=raw[index],correct=selected===q[2];if(correct)scores[activeTeam]+=100;log.push({index,selected,correct,team:activeTeam,reason});[...$('answers').children].forEach((b,i)=>{b.disabled=true;b.classList.add(i===q[2]?'correct':i===selected?'wrong':'dim');if(i===q[2])b.setAttribute('aria-label',LETTERS[i]+'. '+q[1][i]+'. Đáp án đúng')});const fb=$('feedback');fb.hidden=false;fb.classList.toggle('good',correct);const title=correct?'Chính xác! +100 điểm cho '+TEAMS[activeTeam]+'.':reason==='timeout'?'Hết giờ!':reason==='reveal'?'Đáp án: '+LETTERS[q[2]]+'.':'Chưa chính xác!';fb.append(el('strong','',title),document.createTextNode(' '+q[3]));$('pause').disabled=true;$('reveal').disabled=true;$('next').disabled=false;renderTeams();if(reason!=='reveal')beep(correct);}
-function advance(){if(view!=='quiz'||!locked)return;if(index===raw.length-1){renderResult();return}index++;renderQuestion()}
+function finish(selected,reason){
+ if(view!=='quiz'||locked)return;
+ if(reason==='answer'){
+  if(wrongChoices.has(selected))return;
+  if(!paused&&Date.now()>=deadline){selected=null;reason='timeout';remaining=0;updateTimer()}
+ }
+ const q=raw[index],correct=selected===q[2],fb=$('feedback');
+ if(reason==='answer'&&!correct){
+  wrongChoices.add(selected);
+  const b=$('answers').children[selected];b.disabled=true;b.classList.add('wrong','eliminated');b.setAttribute('aria-label',LETTERS[selected]+'. '+q[1][selected]+'. Đã loại');
+  fb.hidden=false;fb.classList.remove('good');fb.replaceChildren(el('strong','','Chưa chính xác!'),document.createTextNode(wrongChoices.size===3?' Đã loại 3 đáp án sai. Chuyển câu tiếp theo…':' Đã loại đáp án '+LETTERS[selected]+'. Mời chọn đáp án khác.'));
+  beep(false);
+  if(wrongChoices.size<3)return;
+  locked=true;stop();log.push({index,selected,correct:false,team:activeTeam,reason:'three-wrong'});
+  [...$('answers').children].forEach(b=>b.disabled=true);$('pause').disabled=true;$('reveal').disabled=true;$('next').disabled=false;renderTeams();
+  autoNext=setTimeout(()=>{autoNext=null;advance()},750);return;
+ }
+ locked=true;stop();if(correct)scores[activeTeam]+=100;
+ log.push({index,selected,correct,team:activeTeam,reason});
+ [...$('answers').children].forEach((b,i)=>{b.disabled=true;if(i===q[2]){b.classList.add('correct');b.setAttribute('aria-label',LETTERS[i]+'. '+q[1][i]+'. Đáp án đúng')}else if(!wrongChoices.has(i))b.classList.add('dim')});
+ fb.hidden=false;fb.classList.toggle('good',correct);
+ const title=correct?'Chính xác! +100 điểm cho '+TEAMS[activeTeam]+'.':reason==='timeout'?'Hết giờ!':'Đáp án: '+LETTERS[q[2]]+'.';
+ fb.replaceChildren(el('strong','',title),document.createTextNode(' '+q[3]));
+ $('pause').disabled=true;$('reveal').disabled=true;$('next').disabled=false;renderTeams();if(reason!=='reveal')beep(correct);
+}
+function advance(){if(view!=='quiz'||!locked)return;cancelNext();if(index===raw.length-1){renderResult();return}index++;renderQuestion()}
 function beep(ok){if(!sound)return;try{audio=audio||new (window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume().catch(()=>{});(ok?[523,659,784]:[330,247]).forEach((f,i)=>{const o=audio.createOscillator(),g=audio.createGain(),t=audio.currentTime+i*.12;o.frequency.value=f;g.gain.setValueAtTime(.001,t);g.gain.linearRampToValueAtTime(.06,t+.02);g.gain.exponentialRampToValueAtTime(.001,t+.17);o.connect(g);g.connect(audio.destination);o.start(t);o.stop(t+.18)})}catch{}}
 function toggleSound(){sound=!sound;const b=$('sound');if(b){b.title=b.getAttribute('aria-label')+' '+(sound?'bật':'tắt');b.setAttribute('aria-pressed',String(sound));b.style.opacity=sound?'1':'.5'}if(sound)beep(true)}
 async function fullscreen(){try{if(document.fullscreenElement)await document.exitFullscreen();else if(document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen()}catch{}}
 function home(){if(view==='quiz'&&!confirm('Về trang bìa? Lượt chơi hiện tại sẽ kết thúc.'))return;showCover()}
-function renderResult(){stop();view='result';stage.innerHTML='<section class="result"><div class="section">Tổng kết minigame</div><h1 id="winner"></h1><p id="summary"></p><div id="ranking" class="ranks"></div><div class="controls" id="resultControls"></div><div class="review" id="review" hidden></div></section>';const sorted=TEAMS.map((name,i)=>({name,score:scores[i]})).sort((a,b)=>b.score-a.score),leaders=sorted.filter(t=>t.score===sorted[0].score);$('winner').textContent=sorted[0].score===0?'Kết thúc minigame':leaders.length>1?'Đồng hạng nhất!':leaders[0].name+' chiến thắng!';$('summary').textContent=log.filter(x=>x.correct).length+' / '+raw.length+' câu trả lời đúng';sorted.forEach(t=>{const r=el('div','rank');r.append(el('span','',t.name),el('b','',t.score+' điểm'));$('ranking').append(r)});const toggle=btn('control','Xem lại đáp án',()=>{const r=$('review');r.hidden=!r.hidden;toggle.textContent=r.hidden?'Xem lại đáp án':'Ẩn đáp án'});$('resultControls').append(btn('control primary','Chơi lại',startGame),btn('control','Về bìa',showCover),toggle);log.forEach(h=>{const q=raw[h.index],d=el('details');d.append(el('summary','',`Câu ${h.index+1}. ${q[0]}`),el('p','',`Đáp án đúng: ${LETTERS[q[2]]}. ${q[1][q[2]]}`),el('p','',q[3]));$('review').append(d)})}
+function renderResult(){stop();cancelNext();view='result';stage.innerHTML='<section class="result"><div class="section">Tổng kết minigame</div><h1 id="winner"></h1><p id="summary"></p><div id="ranking" class="ranks"></div><div class="controls" id="resultControls"></div><div class="review" id="review" hidden></div></section>';const sorted=TEAMS.map((name,i)=>({name,score:scores[i]})).sort((a,b)=>b.score-a.score),leaders=sorted.filter(t=>t.score===sorted[0].score);$('winner').textContent=sorted[0].score===0?'Kết thúc minigame':leaders.length>1?'Đồng hạng nhất!':leaders[0].name+' chiến thắng!';$('summary').textContent=log.filter(x=>x.correct).length+' / '+raw.length+' câu trả lời đúng';sorted.forEach(t=>{const r=el('div','rank');r.append(el('span','',t.name),el('b','',t.score+' điểm'));$('ranking').append(r)});const toggle=btn('control','Xem lại đáp án',()=>{const r=$('review');r.hidden=!r.hidden;toggle.textContent=r.hidden?'Xem lại đáp án':'Ẩn đáp án'});$('resultControls').append(btn('control primary','Chơi lại',startGame),btn('control','Về bìa',showCover),toggle);log.forEach(h=>{const q=raw[h.index],d=el('details');d.append(el('summary','',`Câu ${h.index+1}. ${q[0]}`),el('p','',`Đáp án đúng: ${LETTERS[q[2]]}. ${q[1][q[2]]}`),el('p','',q[3]));$('review').append(d)})}
 document.addEventListener('keydown',e=>{if(e.ctrlKey||e.altKey||e.metaKey||e.repeat)return;const k=e.key.toLowerCase();if(k==='f'){e.preventDefault();fullscreen();return}if(view==='cover'&&['enter',' ','arrowright'].includes(k)){e.preventDefault();startGame();return}if(view!=='quiz')return;if(/^[1-6]$/.test(k)&&+k<=TEAMS.length){e.preventDefault();selectTeam(+k-1)}else if(/^[abcd]$/.test(k)){e.preventDefault();finish(LETTERS.indexOf(k.toUpperCase()),'answer')}else if(k==='p'){e.preventDefault();togglePause()}else if((k==='enter'||k==='arrowright')&&locked){e.preventDefault();advance()}else if(k==='r'&&!locked){e.preventDefault();finish(null,'reveal')}});
 showCover();
 })();
